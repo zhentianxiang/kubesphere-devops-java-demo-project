@@ -1,0 +1,80 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{.IMAGE_NAME}}
+  namespace: {{.PROJECT_NAME}}
+  labels:
+    k8s-app: {{.IMAGE_NAME}}
+    app: {{.IMAGE_NAME}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: {{.IMAGE_NAME}}
+      app: {{.IMAGE_NAME}}
+  template:
+    metadata:
+      labels:
+        k8s-app: {{.IMAGE_NAME}}
+        app: {{.IMAGE_NAME}}
+    spec:
+      containers:
+        - name: {{.IMAGE_NAME}}
+          image: "{{.HARBOR_ADDRESS}}/{{.PROJECT_NAME}}/{{.IMAGE_NAME}}:{{.TAG_NAME}}"
+          imagePullPolicy: Always
+          ports:
+            - name: http-0
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms512m -Xmx2048m -Xmn256m -XX:+UseG1GC -Dspring.profiles.active={{.PROFILE}}"
+            - name: LANG
+              value: "zh_CN.UTF-8"
+            - name: TZ
+              value: "Asia/Shanghai"
+          resources:
+            limits:
+              cpu: '0.5'
+              memory: 1Gi
+            requests:
+              cpu: '0.5'
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 10
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.IMAGE_NAME}}
+  namespace: {{.PROJECT_NAME}}
+  labels:
+    k8s-app: {{.IMAGE_NAME}}
+    app: {{.IMAGE_NAME}}
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    k8s-app: {{.IMAGE_NAME}}
+  type: NodePort

@@ -1,0 +1,22 @@
+cat sonar-scanner/conf/sonar-scanner.properties 
+#Configure here general information about the environment, such as SonarQube server connection details for example
+#No information about specific project should appear here
+
+#----- Default SonarQube server
+sonar.host.url=https://sonarqube.xxx.top
+sonar.login=admin
+sonar.password=admin
+sonar.sourceEncoding=UTF-8
+sonar.language=java
+sonar.sources=.
+sonar.java.binaries=.
+#sonar.projectKey=sonar-runner-simple
+#----- Default source code encoding
+
+
+cat sonarqube-7.9.4/conf/sonar.properties|grep -v "^#"|grep -v "^$"
+sonar.jdbc.url=jdbc:postgresql://localhost/sonarqube?currentSchema=my_schema
+sonar.jdbc.username=sonarqube
+sonar.jdbc.password=sonarqube
+sonar.jdbc.url=jdbc:postgresql://127.0.0.1/sonarqube
+sonar.web.port=9000

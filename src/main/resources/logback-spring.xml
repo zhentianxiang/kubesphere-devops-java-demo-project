@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- 控制台显示 Logback 配置错误 -->
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+
+    <!-- 项目名 -->
+    <property name="APP_NAME" value="halloworld"/>
+    <property name="ACTIVE_PROFILE" value="${spring.profiles.active:-default}"/>
+    <!-- 日志主目录 -->
+    <property name="LOG_HOME" value="logs/${APP_NAME}"/>
+    <!-- 日志输出格式（带异常栈） -->
+    <property name="PATTERN" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%thread] %-5level %logger{50} [${ACTIVE_PROFILE}] - %msg%n%ex{full}"/>
+
+    <!-- 控制台输出（开发 & 采集） -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出，按天切割，超过10MB也切，并压缩 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/current.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}_%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 针对业务日志，DEBUG 级别 -->
+    <logger name="com.example.halloworld" level="DEBUG"/>
+
+    <!-- 第三方框架不关心太多，设成 WARN，防止干扰 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+
+    <!-- ROOT 日志，INFO 以上 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

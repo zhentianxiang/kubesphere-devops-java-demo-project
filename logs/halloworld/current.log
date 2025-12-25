@@ -1,0 +1,239 @@
+2025-10-14T16:01:21.269+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 45446 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:01:21.271+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:01:21.272+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:01:22.666+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:01:22.667+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:01:22.668+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:01:22.774+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:01:23.203+0800 [main] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已启动，正常日志间隔: 2-5秒，错误日志间隔: 5-15秒
+2025-10-14T16:01:23.567+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:01:23.625+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 3.257 seconds (JVM running for 3.865)
+2025-10-14T16:01:27.207+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 检测到新版本可用
+2025-10-14T16:01:29.207+0800 [pool-2-thread-2] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-2] 外部API调用超时
+2025-10-14T16:01:30.212+0800 [pool-2-thread-1] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 网络延迟: 23ms
+2025-10-14T16:01:32.217+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 垃圾回收已完成
+2025-10-14T16:01:37.221+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 数据库连接池活跃数: 12
+2025-10-14T16:01:42.216+0800 [pool-2-thread-2] ERROR com.example.halloworld.controller.HalloController - [pool-2-thread-2] 资源未找到 - 模拟错误
+java.lang.Exception: 模拟错误堆栈
+	at com.example.halloworld.controller.HalloController$ErrorLogWorker.run(HalloController.java:160)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+2025-10-14T16:01:42.225+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 缓存命中率: 78%
+2025-10-14T16:01:42.831+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:01:45.230+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 正在处理用户请求
+2025-10-14T16:01:50.235+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 正在处理用户请求
+2025-10-14T16:01:54.221+0800 [pool-2-thread-2] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-2] 文件系统空间不足
+2025-10-14T16:01:55.238+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 执行定时任务中
+2025-10-14T16:01:57.242+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] CPU负载: 中等
+2025-10-14T16:01:57.381+0800 [pool-2-thread-1] DEBUG com.example.halloworld.controller.HalloController - LogWorker被中断
+2025-10-14T16:01:57.382+0800 [pool-2-thread-2] DEBUG com.example.halloworld.controller.HalloController - ErrorLogWorker被中断
+2025-10-14T16:01:57.383+0800 [SpringContextShutdownHook] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已关闭
+2025-10-14T16:02:49.868+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 46067 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:02:49.871+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:02:49.871+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:02:51.214+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:02:51.215+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:02:51.216+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:02:51.303+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:02:51.528+0800 [main] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已启动，正常日志间隔: 2-5秒，错误日志间隔: 5-15秒
+2025-10-14T16:02:51.981+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:02:52.024+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 2.802 seconds (JVM running for 3.328)
+2025-10-14T16:02:53.528+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 垃圾回收已完成
+2025-10-14T16:02:55.533+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 网络延迟: 23ms
+2025-10-14T16:02:57.689+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:02:59.537+0800 [pool-2-thread-1] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-1] CPU负载: 中等
+2025-10-14T16:03:01.542+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 缓存命中率: 78%
+2025-10-14T16:03:03.547+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 正在处理用户请求
+2025-10-14T16:03:05.531+0800 [pool-2-thread-2] ERROR com.example.halloworld.controller.HalloController - [pool-2-thread-2] 外部API调用超时 - 模拟错误
+java.lang.Exception: 模拟错误堆栈
+	at com.example.halloworld.controller.HalloController$ErrorLogWorker.run(HalloController.java:177)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+2025-10-14T16:03:05.552+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 执行定时任务中
+2025-10-14T16:03:10.557+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 缓存命中率: 78%
+2025-10-14T16:03:12.849+0800 [pool-2-thread-1] DEBUG com.example.halloworld.controller.HalloController - LogWorker被中断
+2025-10-14T16:03:12.849+0800 [pool-2-thread-2] DEBUG com.example.halloworld.controller.HalloController - ErrorLogWorker被中断
+2025-10-14T16:03:12.849+0800 [SpringContextShutdownHook] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已关闭
+2025-10-14T16:07:22.529+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 46848 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:07:22.533+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:07:22.534+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:07:23.354+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:07:23.354+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:07:23.354+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:07:23.430+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:07:23.587+0800 [main] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已启动，正常日志间隔: 2-5秒
+2025-10-14T16:07:23.868+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:07:23.906+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 1.905 seconds (JVM running for 2.159)
+2025-10-14T16:07:25.590+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 内存使用率: 45%
+2025-10-14T16:07:28.596+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 数据库连接池活跃数: 12
+2025-10-14T16:07:30.602+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 数据库连接池活跃数: 12
+2025-10-14T16:07:32.608+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 垃圾回收已完成
+2025-10-14T16:07:36.609+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 缓存命中率: 78%
+2025-10-14T16:07:38.614+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] CPU负载: 中等
+2025-10-14T16:07:41.620+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 系统运行正常
+2025-10-14T16:07:43.626+0800 [pool-2-thread-1] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 数据库连接池活跃数: 12
+2025-10-14T16:07:47.497+0800 [pool-2-thread-1] DEBUG com.example.halloworld.controller.HalloController - LogWorker被中断
+2025-10-14T16:07:47.497+0800 [SpringContextShutdownHook] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已关闭
+2025-10-14T16:10:30.320+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 47444 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:10:30.323+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:10:30.324+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:10:31.550+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:10:31.551+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:10:31.552+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:10:31.654+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:10:31.893+0800 [main] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已启动，正常日志间隔: 2-5秒
+2025-10-14T16:10:32.406+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:10:32.496+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 2.842 seconds (JVM running for 3.341)
+2025-10-14T16:10:33.897+0800 [pool-2-thread-1] WARN  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 内存使用率: 45%
+2025-10-14T16:10:36.898+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 垃圾回收已完成
+2025-10-14T16:10:39.903+0800 [pool-2-thread-1] INFO  com.example.halloworld.controller.HalloController - [pool-2-thread-1] 正在处理用户请求
+2025-10-14T16:10:40.144+0800 [pool-2-thread-1] DEBUG com.example.halloworld.controller.HalloController - LogWorker被中断
+2025-10-14T16:10:40.144+0800 [SpringContextShutdownHook] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已关闭
+2025-10-14T16:11:14.876+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 47514 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:11:14.879+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:11:14.880+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:11:16.178+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:11:16.178+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:11:16.179+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:11:16.239+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:11:16.423+0800 [main] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已启动，正常日志间隔: 2-5秒
+2025-10-14T16:11:17.028+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:11:17.101+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 2.808 seconds (JVM running for 3.279)
+2025-10-14T16:11:18.704+0800 [pool-2-thread-1] DEBUG com.example.halloworld.controller.HalloController - LogWorker被中断
+2025-10-14T16:11:18.704+0800 [SpringContextShutdownHook] INFO  com.example.halloworld.controller.HalloController - 日志模拟器已关闭
+2025-10-14T16:14:45.477+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 48244 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:14:45.480+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:14:45.480+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:14:46.634+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:14:46.635+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:14:46.635+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:14:46.699+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:14:47.320+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:14:47.374+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 2.799 seconds (JVM running for 3.091)
+2025-10-14T16:14:57.749+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:15:19.041+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 48312 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:15:19.047+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:15:19.048+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:15:21.653+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:21.655+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:15:21.656+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:15:21.916+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:15:22.926+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:23.164+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 5.622 seconds (JVM running for 6.753)
+2025-10-14T16:15:44.860+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 48782 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:15:44.863+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:15:44.865+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:15:46.290+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:46.292+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:15:46.292+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:15:46.379+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:15:47.137+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:47.165+0800 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'; nested exception is org.springframework.boot.web.server.PortInUseException: Port 8080 is already in use
+2025-10-14T16:15:47.169+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:47.170+0800 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-10-14T16:15:47.181+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:47.182+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Destroying ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:15:47.200+0800 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2025-10-14T16:16:33.458+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 48893 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:16:33.461+0800 [main] DEBUG com.example.halloworld.HalloworldApplication - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:16:33.461+0800 [main] INFO  com.example.halloworld.HalloworldApplication - No active profile set, falling back to default profiles: default
+2025-10-14T16:16:34.773+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:16:34.774+0800 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-14T16:16:34.774+0800 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:16:34.844+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:16:35.511+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:16:35.614+0800 [main] INFO  com.example.halloworld.HalloworldApplication - Started HalloworldApplication in 2.704 seconds (JVM running for 3.269)
+2025-10-14T16:17:15.472+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:19:36.912+0800 [main] INFO  com.example.halloworld.HalloworldApplication [] - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 49165 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:19:36.915+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:19:36.915+0800 [main] INFO  com.example.halloworld.HalloworldApplication [] - No active profile set, falling back to default profiles: default
+2025-10-14T16:19:39.165+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:19:39.172+0800 [main] INFO  org.apache.catalina.core.StandardService [] - Starting service [Tomcat]
+2025-10-14T16:19:39.175+0800 [main] INFO  org.apache.catalina.core.StandardEngine [] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:19:39.430+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:19:40.698+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:19:40.838+0800 [main] INFO  com.example.halloworld.HalloworldApplication [] - Started HalloworldApplication in 4.898 seconds (JVM running for 5.685)
+2025-10-14T16:20:42.836+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:21:40.255+0800 [main] INFO  com.example.halloworld.HalloworldApplication [dev] - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 49353 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:21:40.256+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [dev] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:21:40.257+0800 [main] INFO  com.example.halloworld.HalloworldApplication [dev] - The following profiles are active: dev
+2025-10-14T16:21:41.308+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [dev] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:21:41.308+0800 [main] INFO  org.apache.catalina.core.StandardService [dev] - Starting service [Tomcat]
+2025-10-14T16:21:41.309+0800 [main] INFO  org.apache.catalina.core.StandardEngine [dev] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:21:41.413+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [dev] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:21:41.904+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [dev] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:21:41.952+0800 [main] INFO  com.example.halloworld.HalloworldApplication [dev] - Started HalloworldApplication in 2.256 seconds (JVM running for 2.569)
+2025-10-14T16:21:55.143+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Starting HalloworldApplication on zhennamenerdeMacBook-Pro.local with PID 49410 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/classes started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:21:55.148+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [prod] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:21:55.149+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - The following profiles are active: prod
+2025-10-14T16:21:55.967+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:21:55.968+0800 [main] INFO  org.apache.catalina.core.StandardService [prod] - Starting service [Tomcat]
+2025-10-14T16:21:55.968+0800 [main] INFO  org.apache.catalina.core.StandardEngine [prod] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:21:56.037+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [prod] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:21:56.529+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:21:56.630+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Started HalloworldApplication in 1.898 seconds (JVM running for 2.16)
+2025-10-14T16:21:57.344+0800 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [prod] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-14T16:22:21.212+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 49487 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:22:21.214+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [default] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:22:21.215+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - No active profile set, falling back to default profiles: default
+2025-10-14T16:22:22.510+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:22:22.511+0800 [main] INFO  org.apache.catalina.core.StandardService [default] - Starting service [Tomcat]
+2025-10-14T16:22:22.511+0800 [main] INFO  org.apache.catalina.core.StandardEngine [default] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:22:22.618+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [default] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:22:23.300+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:22:23.422+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Started HalloworldApplication in 2.944 seconds (JVM running for 3.427)
+2025-10-14T16:22:52.916+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 49549 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:22:52.919+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [prod] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:22:52.919+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - The following profiles are active: prod
+2025-10-14T16:22:54.228+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:22:54.229+0800 [main] INFO  org.apache.catalina.core.StandardService [prod] - Starting service [Tomcat]
+2025-10-14T16:22:54.230+0800 [main] INFO  org.apache.catalina.core.StandardEngine [prod] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:22:54.331+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [prod] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:22:55.039+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-14T16:22:55.130+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Started HalloworldApplication in 2.944 seconds (JVM running for 3.436)
+2025-10-14T16:24:11.694+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Starting HalloworldApplication v1.0 on zhennamenerdeMacBook-Pro.local with PID 49797 (/Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project/target/helloworld-1.0.jar started by macos in /Users/macos/Documents/乱七八糟的目录/idea项目/java-demo-project)
+2025-10-14T16:24:11.696+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [prod] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-14T16:24:11.696+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - The following profiles are active: prod
+2025-10-14T16:24:13.018+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Initializing ProtocolHandler ["http-nio-8887"]
+2025-10-14T16:24:13.019+0800 [main] INFO  org.apache.catalina.core.StandardService [prod] - Starting service [Tomcat]
+2025-10-14T16:24:13.019+0800 [main] INFO  org.apache.catalina.core.StandardEngine [prod] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-14T16:24:13.119+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [prod] - Initializing Spring embedded WebApplicationContext
+2025-10-14T16:24:13.745+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [prod] - Starting ProtocolHandler ["http-nio-8887"]
+2025-10-14T16:24:13.882+0800 [main] INFO  com.example.halloworld.HalloworldApplication [prod] - Started HalloworldApplication in 2.886 seconds (JVM running for 3.366)
+2025-10-23T12:19:50.745+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Starting HalloworldApplication v1.0 on 10.0.0.221 with PID 8540 (/Users/macos/Documents/个人工作空间/IDEA项目/target/helloworld-1.0-prod.jar started by macos in /Users/macos/Documents/个人工作空间/IDEA项目)
+2025-10-23T12:19:50.751+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [default] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-10-23T12:19:50.751+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - No active profile set, falling back to default profiles: default
+2025-10-23T12:19:51.475+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-23T12:19:51.475+0800 [main] INFO  org.apache.catalina.core.StandardService [default] - Starting service [Tomcat]
+2025-10-23T12:19:51.475+0800 [main] INFO  org.apache.catalina.core.StandardEngine [default] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-10-23T12:19:51.515+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [default] - Initializing Spring embedded WebApplicationContext
+2025-10-23T12:19:51.923+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-23T12:19:52.013+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Started HalloworldApplication in 1.615 seconds (JVM running for 1.964)
+2025-12-24T09:54:57.527+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Starting HalloworldApplication v1.0 on bogon with PID 25937 (/Users/zhennamener/Documents/个人/idea项目/java-demo-project/target/helloworld-1.0-dev.jar started by zhennamener in /Users/zhennamener/Documents/个人/idea项目/java-demo-project)
+2025-12-24T09:54:57.533+0800 [main] DEBUG com.example.halloworld.HalloworldApplication [default] - Running with Spring Boot v2.3.3.RELEASE, Spring v5.2.8.RELEASE
+2025-12-24T09:54:57.534+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - No active profile set, falling back to default profiles: default
+2025-12-24T09:54:58.902+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-12-24T09:54:58.903+0800 [main] INFO  org.apache.catalina.core.StandardService [default] - Starting service [Tomcat]
+2025-12-24T09:54:58.903+0800 [main] INFO  org.apache.catalina.core.StandardEngine [default] - Starting Servlet engine: [Apache Tomcat/9.0.37]
+2025-12-24T09:54:58.988+0800 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] [default] - Initializing Spring embedded WebApplicationContext
+2025-12-24T09:54:59.697+0800 [main] INFO  org.apache.coyote.http11.Http11NioProtocol [default] - Starting ProtocolHandler ["http-nio-8080"]
+2025-12-24T09:54:59.760+0800 [main] INFO  com.example.halloworld.HalloworldApplication [default] - Started HalloworldApplication in 2.966 seconds (JVM running for 3.476)

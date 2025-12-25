@@ -1,0 +1,324 @@
+pipeline {
+  agent any
+
+  environment {
+    HARBOR_ADDRESS = 'registry.cn-hangzhou.aliyuncs.com'
+    HARBOR_PROJECT = 'tianxiang_app'
+    DEPLOY_USER = 'root'  // 远程服务器的部署用户
+    APP_PORT = '8081'
+  }
+
+  tools {
+    maven 'maven-3.6.3'  // 这里使用您在 Jenkins 中配置的 Maven 名称
+    jdk 'java-17'        // 选择项目要使用的 jdk 环境
+  }
+
+  parameters {
+    // BRANCH_NAME 支持任意分支名，如：dev、dev-feature-x、test-api、pro-release-1.0 等
+    string(
+      name: 'BRANCH_NAME',
+      defaultValue: 'dev',
+      description: '请输入要构建的 Git 分支，例如：dev / dev-feature-x / test-api / pro-release-1.0'
+    )
+
+      string(
+        name: 'JAR_PATH',
+        defaultValue: '',
+        description: 'Jar 包相对路径（可选，不填则自动识别，适用于非标准/多模块项目）'
+      )
+
+    string(
+      name: 'HARBOR_PROJECT',
+      defaultValue: '',
+      description: 'Harbor 项目名（可选，不填则使用默认环境变量 HARBOR_PROJECT）'
+    )
+
+    string(
+      name: 'IMAGE_NAME',
+      defaultValue: '',
+      description: 'Docker 镜像名称（可选，不填则默认使用 Git 仓库项目名）'
+    )
+  }
+
+  stages {
+    stage('解析部署环境') {
+      steps {
+        script {
+          // 统一【部署环境】到主机/凭据的映射
+          def envConfig = [
+            dev : [env: 'dev' , host: '10.100.4.120'              , sshId: 'ssh-10.100.4.120'],
+            test: [env: 'test', host: 'test-server.tianxiang.love', sshId: 'test-ssh-key'],
+            prod: [env: 'prod', host: 'prod-server.tianxiang.love', sshId: 'prod-ssh-key'],
+          ]
+
+          def branch = params.BRANCH_NAME?.trim()
+          if (!branch) {
+            error "BRANCH_NAME 不能为空，请输入要构建的 Git 分支，例如 dev / dev-feature-x / test-api / pro-release"
+          }
+
+          // 根据 BRANCH_NAME 前缀自动推断部署环境
+          // 规则示例：
+          //   dev、dev-xxx        -> dev 环境
+          //   test、test-xxx      -> test 环境
+          //   pro、pro-xxx        -> prod 环境
+          //   prod、prod-xxx      -> prod 环境
+          String envKey
+          if (branch ==~ /^dev(-.*)?$/) {
+            envKey = 'dev'
+          } else if (branch ==~ /^test(-.*)?$/) {
+            envKey = 'test'
+          } else if (branch ==~ /^(pro|prod)(-.*)?$/) {
+            envKey = 'prod'
+          } else {
+            error "无法根据 BRANCH_NAME='${branch}' 推断部署环境，请使用 dev/dev-、test/test-、pro/prod/pro-/prod- 作为前缀"
+          }
+
+          def cfg = envConfig[envKey]
+          if (!cfg) {
+            error "未找到环境配置: envKey=${envKey}"
+          }
+
+          env.DEPLOY_ENV = cfg.env
+          env.DEPLOY_HOST = cfg.host
+          env.SSH_CREDENTIALS_ID = cfg.sshId
+
+          echo "🚀 解析部署环境完成: 分支=${branch}, DEPLOY_ENV=${env.DEPLOY_ENV}"
+          echo "🌐 目标服务器: ${env.DEPLOY_HOST}"
+          echo "🔗 应用端口: ${APP_PORT}"
+        }
+      }
+    }
+
+    stage('拉取代码') {
+      steps {
+        echo "📥 正在拉取分支: ${params.BRANCH_NAME}"
+        git(url: 'https://k8s-gitlab.tianxiang.love/my-awesome-group/java-demo-project.git',
+            branch: "${params.BRANCH_NAME}",
+            credentialsId: '983874af-38db-4dfb-b9b2-e3d1df3446ba')
+
+        script {
+          env.GIT_SHORT_COMMIT = env.GIT_COMMIT.take(6)
+          echo "✅ 当前 GIT_COMMIT(6位短哈希): ${env.GIT_SHORT_COMMIT}"
+
+          // 动态设置 HARBOR_PROJECT / IMAGE_NAME：优先使用用户参数，其次使用默认/仓库名
+          def repoUrl = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+          def repoPath = repoUrl
+          if (repoUrl.contains('://')) {
+            repoPath = repoUrl.split('://', 2)[1]
+          }
+          if (!repoUrl.contains('://') && repoPath.contains(':')) {
+            // 兼容 git@host:group/repo.git
+            repoPath = repoPath.split(':', 2)[1]
+          }
+          def repoName = repoPath.tokenize('/')?.last()
+          repoName = repoName?.trim().replaceAll(/\.git$/, '')
+
+          env.HARBOR_PROJECT = params.HARBOR_PROJECT?.trim() ? params.HARBOR_PROJECT.trim() : env.HARBOR_PROJECT
+          env.IMAGE_NAME = params.IMAGE_NAME?.trim() ? params.IMAGE_NAME.trim() : repoName
+
+          if (!env.IMAGE_NAME?.trim()) {
+            error "无法推断 IMAGE_NAME（repoUrl=${repoUrl}），请在参数 IMAGE_NAME 中手动指定"
+          }
+
+          echo "📦 最终镜像信息: HARBOR_PROJECT=${env.HARBOR_PROJECT}, IMAGE_NAME=${env.IMAGE_NAME}"
+        }
+      }
+    }
+
+    stage('构建Jar包') {
+      steps {
+        script {
+          // 1️⃣ 确定 Maven Profile
+          def mvnProfile = (env.DEPLOY_ENV == 'prod') ? 'prod' : 'dev'
+          echo "🏗️ 使用 Maven Profile: ${mvnProfile}"
+
+          // 2️⃣ Maven 构建
+          sh "mvn -B clean package -P ${mvnProfile} -Dmaven.test.skip=true"
+
+          echo "📦 确定 Jar 构建产物..."
+
+          // 3️⃣ 优先使用用户指定的 JAR_PATH
+          if (params.JAR_PATH?.trim()) {
+            env.JAR_PATH = params.JAR_PATH.trim()
+
+            if (!fileExists(env.JAR_PATH)) {
+              error "❌ 指定的 JAR_PATH 不存在: ${env.JAR_PATH}"
+            }
+
+            echo "✅ 使用用户指定 Jar: ${env.JAR_PATH}"
+          }
+          // 4️⃣ Maven 官方方式解析（最稳）
+          else {
+            def buildDir = sh(
+              returnStdout: true,
+              script: 'mvn -q help:evaluate -Dexpression=project.build.directory -DforceStdout 2>/dev/null || true'
+            ).trim()
+
+            def finalName = sh(
+              returnStdout: true,
+              script: 'mvn -q help:evaluate -Dexpression=project.build.finalName -DforceStdout 2>/dev/null || true'
+            ).trim()
+
+            if (buildDir && finalName && fileExists("${buildDir}/${finalName}.jar")) {
+              env.JAR_PATH = "${buildDir}/${finalName}.jar"
+              echo "✅ 使用 Maven 构建产物: ${env.JAR_PATH}"
+            }
+            // 5️⃣ 兜底：全仓库扫描（多模块 / 非标准）
+            else {
+              echo "🔄 Maven 解析失败，执行全仓库扫描..."
+
+              env.JAR_PATH = sh(
+                returnStdout: true,
+                script: '''
+                  find . -type f -name "*.jar" \
+                    ! -name "*-sources.jar" \
+                    ! -name "*-javadoc.jar" \
+                    ! -name "original-*.jar" \
+                  | xargs ls -lh \
+                  | sort -k5 -h \
+                  | tail -n 1 \
+                  | awk '{print $NF}'
+                '''
+              ).trim()
+
+              if (!env.JAR_PATH || !fileExists(env.JAR_PATH)) {
+                error "❌ 无法自动识别 Jar 包，请通过 JAR_PATH 参数手动指定"
+              }
+
+              echo "✅ 自动识别主 Jar: ${env.JAR_PATH}"
+            }
+          }
+
+          // 6️⃣ 最终确认（方便排障）
+          sh "ls -lh ${env.JAR_PATH}"
+        }
+      }
+    }
+
+    stage('生成TAG标签') {
+      steps {
+        script {
+          def dateTag = sh(returnStdout: true, script: 'date +%Y-%m-%d-%H-%M').trim()
+          env.TAG_NAME = "${params.BRANCH_NAME}-${dateTag}-${env.GIT_SHORT_COMMIT}-${BUILD_NUMBER}"
+          env.IMAGE_FULL_NAME = "$HARBOR_ADDRESS/$HARBOR_PROJECT/$IMAGE_NAME:${env.TAG_NAME}"
+          echo "✅ 生成的 TAG_NAME: ${env.TAG_NAME}"
+        }
+      }
+    }
+
+    stage('Docker Build & Push 镜像') {
+      steps {
+        script {
+          echo "登录 Harbor 仓库"
+          // 使用 withCredentials 包装需要密码的步骤
+          withCredentials([usernamePassword(
+            credentialsId: 'harbor-credentials',
+            usernameVariable: 'HARBOR_USER',
+            passwordVariable: 'HARBOR_PASSWD'
+          )]) {
+            sh "echo \"$HARBOR_PASSWD\" | docker login $HARBOR_ADDRESS -u \"$HARBOR_USER\" --password-stdin"
+
+            echo "构建镜像: ${env.IMAGE_FULL_NAME}"
+
+            // 将绝对路径转换为相对路径（Docker build context需要）
+            def jarRelativePath = sh(
+              returnStdout: true,
+              script: "realpath --relative-to=. ${env.JAR_PATH}"
+            ).trim()
+
+            echo "📦 Docker JAR_FILE 参数: ${jarRelativePath}"
+
+            sh """
+              docker build \\
+                --build-arg JAR_FILE=${jarRelativePath} \\
+                --build-arg PROFILE=${env.DEPLOY_ENV} \\
+                --build-arg PORT=${APP_PORT} \\
+                -t ${env.IMAGE_FULL_NAME} .
+            """
+
+            echo "推送镜像中..."
+            sh "docker push ${env.IMAGE_FULL_NAME}"
+            echo "✅ 镜像推送成功: ${env.IMAGE_FULL_NAME}"
+          }
+        }
+      }
+    }
+
+    stage('生成部署文件') {
+      steps {
+        script {
+          // 安装envsubst工具（如果需要）
+          sh '''
+            if ! command -v envsubst &> /dev/null; then
+              echo "安装envsubst..."
+              if command -v yum &> /dev/null; then
+                sudo yum install -y gettext
+              elif command -v apt-get &> /dev/null; then
+                sudo apt-get install -y gettext
+              fi
+            fi
+          '''
+
+          // 执行生成部署文件的脚本
+          sh """
+            if [ -f "jenkins/scripts/generate-deploy-files.sh" ]; then
+              chmod +x jenkins/scripts/generate-deploy-files.sh
+              jenkins/scripts/generate-deploy-files.sh ${env.DEPLOY_ENV} ${env.IMAGE_FULL_NAME}
+            else
+              echo "⚠️  生成脚本不存在，跳过文件生成"
+            fi
+          """
+
+          // 检查生成的文件
+          sh 'ls -la start-app/ 2>/dev/null || echo "start-app目录不存在"'
+        }
+      }
+    }
+
+    stage('SSH远程部署（简单版）') {
+      steps {
+        script {
+          echo "🔗 连接远程服务器 ${env.DEPLOY_HOST}"
+
+          sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
+            // 上传 docker-compose 文件到远程服务器
+            sh """
+              ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${env.DEPLOY_HOST} \\
+                "mkdir -p /opt/apps/${IMAGE_NAME}/start-app"
+
+              scp -o StrictHostKeyChecking=no start-app/docker-compose.yml \\
+                ${DEPLOY_USER}@${env.DEPLOY_HOST}:/opt/apps/${IMAGE_NAME}/start-app/ 2>/dev/null || echo "docker-compose.yml不存在"
+            """
+
+            // 在远程服务器上直接执行 docker-compose 部署，不做自动回滚和复杂健康检查
+            sh """
+              ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${env.DEPLOY_HOST} \\
+                "cd /opt/apps/${IMAGE_NAME}/start-app && \\
+                 docker-compose pull || docker-compose pull || true && \\
+                 docker-compose up -d || docker-compose up -d && \\
+                 docker-compose ps || docker-compose ps"
+            """
+          }
+
+          echo "✅ 远程部署完成（如需进一步健康检查，可在服务器上自行 curl/查看日志）"
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "🎉 流水线执行成功！"
+      script {
+        currentBuild.description = "✅ ${env.DEPLOY_ENV} - ${env.TAG_NAME}"
+      }
+    }
+
+    failure {
+      echo "❌ 流水线执行失败！"
+      script {
+        currentBuild.description = "❌ ${env.DEPLOY_ENV} - ${env.TAG_NAME}"
+      }
+    }
+  }
+}

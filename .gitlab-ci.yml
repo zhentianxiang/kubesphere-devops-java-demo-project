@@ -1,0 +1,252 @@
+stages:
+  - package
+  - docker_build
+  - deploy_k8s
+
+variables:
+  GIT_DEPTH: 0    # 完整克隆代码
+  MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/.cache/maven"      # Maven 缓存
+
+# 全局缓存配置（所有 job 继承）
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/maven   # 全局缓存 .cache 目录
+  policy: pull-push
+
+before_script:
+  - mkdir -p .cache/maven/jar/
+  - export MAVEN_OPTS="-Dmaven.repo.local=${CI_PROJECT_DIR}/.cache/maven"
+  - export PATH=/usr/local/apache-maven-3.6.3/bin:$PATH
+
+mvn_build_job:
+  image: harbor.tianxiang.love/library/maven-3.6.3-jdk-21:latest
+  stage: package
+  tags:
+    - k8s-runner
+  script:
+    # 动态构建模式
+    - |
+      if [[ "$CI_COMMIT_BRANCH" =~ ^pre.* ]]; then
+        PROFILE=pre
+      elif [[ "$CI_COMMIT_BRANCH" =~ ^dev.* ]]; then
+        PROFILE=dev
+      elif [[  "$CI_COMMIT_BRANCH" == "main" || "$CI_COMMIT_BRANCH" =~ ^prod.* ]]; then
+        PROFILE=prod
+      fi
+
+    # maven 构建并指定缓存目录
+    - mvn -B clean install -P${PROFILE} -Dmaven.test.skip=true #-Dmaven.repo.local=.cache/maven
+
+    # 动态获取 JAR 二进制文件名
+    - JAR_NAME=$(find target -maxdepth 1 -name "*.jar" ! -name "*-sources.jar" ! -name "*-javadoc.jar" ! -name "original-*" | head -n 1)
+
+    - ls $JAR_NAME
+    # 创建缓存 JAR 二进制文件目录
+    - cp $JAR_NAME .cache/maven/jar/
+
+    # 验证缓存是否成
+    - ls -lah .cache/maven/jar/
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^pre.*/' # 匹配 pre 开头的分支，如 pre-2025-05-15
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^dev.*/'  # 匹配 dev 开头的分支
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "main"'   # 只匹配 main 分支
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^prod.*/' # 匹配 prod 开头的分支，如 prod-2025-05-15
+      when: on_success
+
+
+docker_build_job:
+  image: harbor.tianxiang.love/library/docker:latest
+  stage: docker_build
+  tags:
+    - k8s-runner
+  script:
+    # 验证上个阶段的构建产物是否在本阶段存在
+    - ls -lah .cache/maven/jar/
+
+    # 从缓存中动态获取 JAR 文件名
+    - JAR_NAME=$(ls $(pwd)/.cache/maven/jar/*.jar)
+
+    # 复制 JAR 文件到项目根目录 target 目录中以备 Dockerfile 使用
+    - mkdir -p target
+
+    - cp $JAR_NAME target/
+
+    # 定义 k8s 部署项目名称
+    - PROJECT_NAME="k8s-app"
+
+    # 定义镜像名称
+    - IMAGE_NAME="java-demon-project"
+
+    # 生成镜像标签
+    - TAG_NAME="${CI_COMMIT_REF_NAME}-$(date +%Y-%m-%d-%H-%M)-${CI_COMMIT_SHORT_SHA}-${CI_PIPELINE_ID}"
+
+    # 动态构建模式
+    - |
+      if [[ "$CI_COMMIT_BRANCH" =~ ^pre.* ]]; then
+         PROFILE=pre
+         HARBOR_ADDRESS=harbor.meta42-uat.com
+         # 预生产环境 Docker 认证
+         mkdir -pv ~/.docker/
+         echo $PRE_DOCKER_AUTH_CONFIG | base64 -d > ~/.docker/config.json
+         # 配置 docker ca 证书
+         mkdir -pv /etc/docker/certs.d/harbor.tianxiang.love
+         echo $PRE_DOCKER_CA | base64 -d > /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         cat /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         ENV_DESC="预生产环境"
+      elif [[ "$CI_COMMIT_BRANCH" =~ ^dev.* ]]; then
+        PROFILE=dev
+         HARBOR_ADDRESS=harbor.tianxiang.love
+         # 开发环境 Docker 认证
+         mkdir -pv ~/.docker/
+         echo $DEV_DOCKER_AUTH_CONFIG | base64 -d > ~/.docker/config.json
+         # 配置 docker ca 证书
+         mkdir -pv /etc/docker/certs.d/harbor.tianxiang.love
+         echo $DEV_DOCKER_CA | base64 -d > /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         cat /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         ENV_DESC="开发环境"
+      elif [[ "$CI_COMMIT_BRANCH" == "main" || "$CI_COMMIT_BRANCH" =~ ^prod.* ]]; then
+         PROFILE=prod
+         HARBOR_ADDRESS=harbor.tianxiang.love
+         # 生产环境 Docker 认证
+         mkdir -pv ~/.docker/
+         echo $PROD_DOCKER_AUTH_CONFIG | base64 -d > ~/.docker/config.json
+         # 配置 docker ca 证书
+         mkdir -pv /etc/docker/certs.d/harbor.tianxiang.love
+         echo $PROD_DOCKER_CA | base64 -d > /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         cat /etc/docker/certs.d/harbor.tianxiang.love/ca.crt
+         ENV_DESC="生产环境"
+      else
+      echo "❌ 未识别的分支，构建终止"
+      exit 1
+      fi
+    - |
+      cat <<EOF > .cache/maven/.ENV_FILE.env
+      PROJECT_NAME=$PROJECT_NAME
+      IMAGE_NAME=$IMAGE_NAME
+      TAG_NAME=$TAG_NAME
+      HARBOR_ADDRESS=$HARBOR_ADDRESS
+      EOF
+    - cat .cache/maven/.ENV_FILE.env
+    - echo "制作镜像 $IMAGE_NAME:$TAG_NAME 到$ENV_DESC"
+    - ls -la /etc/docker/certs.d/
+    - ls -la /etc/docker/certs.d/*/
+    - docker login $HARBOR_ADDRESS
+    - docker pull harbor.tianxiang.love/library/jdk-8u421:v1.8.0_421
+    - docker build --build-arg PROFILE=$PROFILE -t $HARBOR_ADDRESS/$PROJECT_NAME/$IMAGE_NAME:$TAG_NAME .
+    - docker push $HARBOR_ADDRESS/$PROJECT_NAME/$IMAGE_NAME:$TAG_NAME
+    - MSG="✅ 已推送镜像 \"$HARBOR_ADDRESS/$PROJECT_NAME/$IMAGE_NAME:$TAG_NAME\" 到$ENV_DESC"
+    - echo "$MSG"
+    - docker rmi $HARBOR_ADDRESS/$PROJECT_NAME/$IMAGE_NAME:$TAG_NAME
+
+  artifacts:
+    paths:
+      - .cache/maven/.ENV_FILE.env
+    expire_in: 1 week
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^pre.*/' # 匹配 pre 开头的分支，如 pre-2025-05-15
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^dev.*/'  # 匹配 dev 开头的分支
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "main"'   # 只匹配 main 分支
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^prod.*/' # 匹配 prod 开头的分支，如 prod-2025-05-15
+      when: on_success
+
+deploy_k8s_job:
+  image: harbor.tianxiang.love/library/kubectl:v1.23.0
+  stage: deploy_k8s
+  tags:
+    - k8s-runner
+  script:
+    - mkdir -pv ~/.kube/
+    - ls -lh
+    # 加载缓存中的镜像信息变量
+    - source .cache/maven/.ENV_FILE.env
+    - |
+      if [[ "$CI_COMMIT_BRANCH" =~ ^pre.* ]]; then
+        echo '部署服务到预生产环境'
+        PROFILE=pre
+        echo "$PRE_KUBE_CONFIG" | base64 -d > ~/.kube/config
+        echo '192.168.233.246 apiserver.cluster.local' | tee -a /etc/hosts
+        sed -e "s/{{.IMAGE_NAME}}/$IMAGE_NAME/g" \
+            -e "s/{{.PROJECT_NAME}}/$PROJECT_NAME/g" \
+            -e "s/{{.TAG_NAME}}/$TAG_NAME/g" \
+            -e "s/{{.HARBOR_ADDRESS}}/$HARBOR_ADDRESS/g" \
+            -e"s/{{.PROFILE}}/$PROFILE/g" \
+               k8s/deployment-pre.tml > k8s/deployment-pre.yaml
+        cat k8s/deployment-pre.yaml
+
+        # 记录部署开始时间
+        DEPLOY_START_TIME=$(date +%s)
+        echo "DEPLOY_START_TIME=$DEPLOY_START_TIME" > /tmp/deploy_time.env
+        echo "🚀 开始部署..."
+        kubectl apply -f k8s/deployment-pre.yaml
+
+        # 检查 pod 启动情况
+        bash ./scripts/wait-pod-running.sh "${HARBOR_PROJECT}" "${IMAGE_NAME}"
+
+        grep -v '192.168.233.246 apiserver.cluster.local' /etc/hosts > /tmp/hosts && cat /tmp/hosts > /etc/hosts
+
+      elif [[ "$CI_COMMIT_BRANCH" =~ ^dev.* ]]; then
+        echo '部署服务到开发环境'
+        PROFILE=dev
+        echo "$DEV_KUBE_CONFIG" | base64 -d > ~/.kube/config
+        echo '192.168.198.51 dev-apiserver.cluster.local' | tee -a /etc/hosts
+        sed -e "s/{{.IMAGE_NAME}}/$IMAGE_NAME/g" \
+            -e "s/{{.PROJECT_NAME}}/$PROJECT_NAME/g" \
+            -e "s/{{.TAG_NAME}}/$TAG_NAME/g" \
+            -e "s/{{.HARBOR_ADDRESS}}/$HARBOR_ADDRESS/g" \
+            -e "s/{{.PROFILE}}/$PROFILE/g" \
+               k8s/deployment-dev.tml > k8s/deployment-dev.yaml
+        cat k8s/deployment-dev.yaml
+
+        # 记录部署开始时间
+        DEPLOY_START_TIME=$(date +%s)
+        echo "DEPLOY_START_TIME=$DEPLOY_START_TIME" > /tmp/deploy_time.env
+        echo "🚀 开始部署..."
+        kubectl apply -f k8s/deployment-dev.yaml
+        
+        # 检查 pod 启动情况
+        bash ./scripts/wait-pod-running.sh "${HARBOR_PROJECT}" "${IMAGE_NAME}"
+
+        grep -v '192.168.198.51 dev-apiserver.cluster.local' /etc/hosts > /tmp/hosts && cat /tmp/hosts > /etc/hosts
+
+      elif [[ "$CI_COMMIT_BRANCH" == "main" || "$CI_COMMIT_BRANCH" =~ ^prod.* ]]; then
+        echo '部署服务到生产环境'
+        PROFILE=prod
+        echo "$PROD_KUBE_CONFIG" | base64 -d > ~/.kube/config
+        echo '192.168.233.246 apiserver.cluster.local '  | tee -a /etc/hosts
+        sed -e "s/{{.IMAGE_NAME}}/$IMAGE_NAME/g" \
+            -e "s/{{.PROJECT_NAME}}/$PROJECT_NAME/g" \
+            -e "s/{{.TAG_NAME}}/$TAG_NAME/g" \
+            -e "s/{{.HARBOR_ADDRESS}}/$HARBOR_ADDRESS/g" \
+            -e"s/{{.PROFILE}}/$PROFILE/g" \
+               k8s/deployment-prod.tml > k8s/deployment-prod.yaml
+        cat k8s/deployment-prod.yaml
+      
+        # 记录部署开始时间
+        DEPLOY_START_TIME=$(date +%s)
+        echo "DEPLOY_START_TIME=$DEPLOY_START_TIME" > /tmp/deploy_time.env
+        echo "🚀 开始部署..."
+        kubectl apply -f k8s/deployment-prod.yaml
+        
+        # 检查 pod 启动情况
+        bash ./scripts/wait-pod-running.sh "${HARBOR_PROJECT}" "${IMAGE_NAME}"
+
+        grep -v '192.168.233.246 apiserver.cluster.local ' /etc/hosts > /tmp/hosts && cat /tmp/hosts > /etc/hosts
+      fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^pre.*/' # 匹配 pre 开头的分支，如 pre-2025-05-15
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ /^dev.*/'  # 匹配 dev 开头的分支
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "main"'   # 只匹配 main 分支
+      when: manual  # 手动触发 main 分支部署
+    - if: '$CI_COMMIT_BRANCH =~ /^prod.*/' # 匹配 prod 开头的分支，如 prod-2025-05-15
+      when: manual  # 手动触发 prod 开头的分支部署

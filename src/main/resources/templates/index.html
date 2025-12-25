@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Halloworld</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>👋</text></svg>">
+</head>
+<body class="page" th:classappend=" ' env-' + ${env}">
+<header class="header">
+    <div class="brand">Halloworld</div>
+    <div class="env-badge" th:text="${env}">DEV</div>
+</header>
+
+<main class="content">
+    <section class="card">
+        <h1>欢迎使用示例应用</h1>
+        <p>当前部署环境：<strong th:text="${env}">DEV</strong></p>
+        <p>应用名称：<span th:text="${appName}">halloworld-service</span></p>
+        <p>服务器信息：<span id="hostInfo">加载中...</span></p>
+    </section>
+
+    <section class="grid">
+        <a class="tile" href="/health" target="_blank">健康检查</a>
+        <a class="tile" href="/sip" target="_blank">服务器IP</a>
+        <a class="tile" href="/actuator" target="_blank">Actuator</a>
+    </section>
+</main>
+
+<footer class="footer">© <span th:text="${year}">2025</span> · 环境 <span th:text="${env}">DEV</span></footer>
+
+<script>
+fetch('/sip').then(r => r.json()).then(d => {
+  const el = document.getElementById('hostInfo');
+  el.textContent = `IP: ${d.ip || '-'} / 主机: ${d.hostname || '-'}`;
+}).catch(() => {
+  document.getElementById('hostInfo').textContent = '不可用';
+});
+</script>
+</body>
+</html>
