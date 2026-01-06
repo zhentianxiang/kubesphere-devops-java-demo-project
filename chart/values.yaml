@@ -1,0 +1,115 @@
+global:
+  #镜像仓库密钥（私有镜像仓库需要）
+  imagePullSecrets:
+    name: harbor-registry-secret
+  # 拉取镜像策略: `IfNotPresent`, `Always`, `Never`
+  imagePullPolicy: IfNotPresent
+
+deploy:
+  #应用示例个数，生产建议设置2以上
+  replicaCount: 1
+  #修改镜像地址,tag
+  image:
+    repository: 
+    tag: 
+  imagePullSecrets: []
+  #资源，limit是最多使用多少，request是至少有多少资源该应用才能运行
+  resources:
+    limits:
+      cpu: 1
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  #环境变量,没有时写[]
+  envVars:
+    #JAVA_OPTS: "-Xms512m -Xmx512m"
+  command: []
+  #'["java", "-c"]'
+  args: []
+  # '["arg1", "arg2", "arg3"]'
+  #节点标签选择器
+  nodeSelector: {}
+  #亲和性
+  affinity: {}
+  #容忍
+  tolerations: {}
+
+#修改端口，后端8090，前端80
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+  protocol: TCP
+
+#外部访问（域名）
+ingress:
+  enabled: true
+  className: nginx
+  path: /
+  hosts:
+    - java-demo-project.tiexue.net
+  #开启https访问，默认关闭，TLS secrets 需要提前创建
+  tls:
+    enabled: false
+    #需要https访问的域名,不知道把上面域名复制粘贴到此处就行
+    hosts:
+      - java-demo-project.tiexue.net
+    #TLS secret名称
+    secrets: tiexue.net
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    #ws，开启以下注释即可（需要修改value值为项目名）
+    #nginx.org/websocket-services:
+  labels: {}
+#    label: "true"
+
+log:
+  enabled: false
+  #容器内挂载路径
+  mountPath: /tmp/mount
+  #以下方式只能选择一个，同时为true该配置不生效
+  #使用pvc
+  persistence:
+    enabled: false
+    accessMode: "ReadWriteOnce"
+    size: 10Gi
+    storageClass: "-"
+    existingClaim: ""
+  #使用localpath
+  hostPath:
+    enabled: false
+    #主机路径
+    path: /tmp
+    ##DirectoryOrCreate  如果给定路径不存在，将根据需要在那里创建一个空目录，权限设置为755，与Kubelet具有相同的组和所有权。
+    ##Directory   给定的目录路径必须存在
+    ##FileOrCreate        如果给定路径不存在，将根据需要在那里创建一个空文件，权限设置为644，与Kubelet具有相同的组和所有权。
+    ##File        给定路径上必须存在对应文件
+    ##Socket      给定路径上必须存在一个UNIX socket
+    ##CharDevice  给定路径上必须存在字符设备
+    ##BlockDevice 给定路径上必须存在块设备
+    type: DirectoryOrCreate
+
+#配置文件
+configs:
+  enabled: false
+  #name是congfigs里文件的名称
+  #path是容器内挂载路径
+  #subPath:文件名称，和name保持一致，按示例配置即可
+  list:
+    - name: nginx.conf
+      path: /etc/nginx/nginx.conf
+      subPath: nginx.conf
+    #- name: application.yaml.yaml
+    #  path: /tmp/application.yaml
+    #  subPath: application.yaml.yaml
+
+#是否同步主机时间
+time:
+  enabled: true
+
+#是否使用主机网络
+hostNetwork:
+  enabled: false
+

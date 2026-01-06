@@ -1,0 +1,94 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ include "deploy.name" . }}
+  labels:
+    {{- include "service.labels.standard" . | indent 4 }}
+  annotations: 
+    {{- include "service.annotations.standard" . | indent 4 }}
+spec:
+  replicas: {{.Values.deploy.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "service.labels.standard" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "service.labels.standard" . | indent 8 }}
+    spec:
+      {{- if .Values.hostNetwork.enabled }}
+      hostNetwork: true
+      {{- end }}
+
+      {{- $pullSecrets := .Values.deploy.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      {{- if $pullSecrets }}
+      imagePullSecrets:
+        {{- if kindIs "string" $pullSecrets }}
+        - name: {{ $pullSecrets }}
+        {{- else }}
+        {{- range $pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+
+      {{- with .Values.deploy.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deploy.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deploy.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: {{ lower .Values.service.protocol }}-{{ .Values.service.port }}
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: {{ .Values.service.protocol }}
+          resources: 
+            {{- toYaml .Values.deploy.resources | nindent 12 }}
+          {{- if .Values.deploy.envVars }}
+          env:
+            {{- if kindIs "map" .Values.deploy.envVars }}
+            {{- range $key, $value := .Values.deploy.envVars }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- else }}
+            {{- toYaml .Values.deploy.envVars | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.deploy.command}}
+          command: {{ .Values.deploy.command }}
+          {{- end }}
+          {{- if .Values.deploy.args}}
+          args: {{ .Values.deploy.args }}
+          {{- end }}
+          {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled)}}
+          volumeMounts:
+            {{- if .Values.time.enabled }}
+          - name: host-time
+            readOnly: true
+            mountPath: /etc/localtime
+            {{- end }}         
+          {{- if or (.Values.log.persistence.enabled) ( .Values.log.hostPath.enabled)}}
+          - name: log
+            mountPath: {{.Values.log.mountPath}}
+          {{- end }}  
+          {{- if .Values.configs.enabled -}}
+          {{ include "configmap.mount" . | indent 10 }}
+          {{- end -}}
+        {{- end }}
+      {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled) }}        
+      volumes:
+        {{- include "time.volumes" . | indent 8 -}} 
+        {{- include "log.volumes" . | indent 8 -}}
+        {{ include "configmap.volumes" . | indent 8 }}
+      {{- end }} 

@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: "1.0.0"
+description: java-demon-project
+name: java-demon-project
+version: 1.0.0
+maintainers:
+  - name: zhentianxiang

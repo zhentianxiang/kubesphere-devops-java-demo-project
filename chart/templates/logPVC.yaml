@@ -1,0 +1,21 @@
+{{- if and (.Values.log.enabled) (.Values.log.persistence.enabled) (not .Values.log.persistence.existingClaim) }} 
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "deploy.name" . }}-log
+  labels: 
+  {{- include "service.labels.standard" . | indent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.log.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.log.persistence.size | quote }}
+  {{- if .Values.log.persistence.storageClass }}
+  {{- if (eq "-" .Values.log.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: "{{ .Values.log.persistence.storageClass }}"
+  {{- end }}
+  {{- end }}
+{{- end }}
