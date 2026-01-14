@@ -371,7 +371,7 @@ pipeline {
 
             echo "✅ Helm 部署完成，输出状态："
             helm3 status "${RELEASE_NAME}" --namespace "${NAMESPACE}" || true
-	        helm3 list -n "${NAMESPACE}" "${RELEASE_NAME}"
+            helm3 list -n "${NAMESPACE}" "${RELEASE_NAME}"
 
             echo "⏳ 等待 Deployment 就绪：${DEPLOY_NAME}"
             kubectl rollout status deployment/"${RELEASE_NAME}" -n "${NAMESPACE}" --timeout=300s
