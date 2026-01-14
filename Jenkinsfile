@@ -377,7 +377,7 @@ pipeline {
             kubectl rollout status deployment/"${RELEASE_NAME}" -n "${NAMESPACE}" --timeout=300s
 
             echo "📌 当前资源："
-            kubectl get deploy,po,svc,ingress -n "${NAMESPACE}" -l app.kubernetes.io/name="${CHART_NAME}" -o wide || true
+            kubectl get deploy,po,svc,ingress -n "${NAMESPACE}" -l app.kubernetes.io/name="${RELEASE_NAME}" -o wide || true
           '''
         }
       }
