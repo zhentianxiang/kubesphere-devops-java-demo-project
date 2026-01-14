@@ -302,10 +302,20 @@ pipeline {
               exit 1
             fi
 
+            # 如果提供了 HELM_RELEASE，则动态修改 Chart.yaml 中的 name 字段
+            if [ -n "${HELM_RELEASE}" ]; then
+                # 备份原始 Chart.yaml
+                if [ -f "${CHART_SRC_DIR}/Chart.yaml" ]; then
+                    # 使用 sed 直接修改 name 字段
+                    sed -i "s/^name:.*$/name: ${HELM_RELEASE}/" "${CHART_SRC_DIR}/Chart.yaml"
+                fi
+            fi
+
+            # 解析修改后的 Chart.yaml
             CHART_NAME="$(awk -F': *' '/^name:/{print $2; exit}' "${CHART_SRC_DIR}/Chart.yaml" | tr -d '\r' | xargs)"
             if [ -z "${CHART_NAME}" ]; then
-              echo "❌ 无法从 Chart.yaml 解析 chart name"
-              exit 1
+                echo "❌ 无法从 Chart.yaml 解析 chart name"
+                exit 1
             fi
 
             # helm lint 要求：目录名必须和 Chart.yaml 的 name 一致

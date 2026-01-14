@@ -1,8 +1,6 @@
 {{/*定义应用名称*/}}
 {{- define "deploy.name" }}
 {{- $chart_name := .Chart.Name -}}
-{{- $namespace := .Release.Namespace -}}
-{{- print $chart_name "-" $namespace -}}
 {{- end }}
 
 
