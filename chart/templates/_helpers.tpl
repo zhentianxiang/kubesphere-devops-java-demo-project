@@ -1,6 +1,7 @@
 {{/*定义应用名称*/}}
 {{- define "deploy.name" }}
 {{- $chart_name := .Chart.Name -}}
+{{- print $chart_name -}}
 {{- end }}
 
 
