@@ -91,6 +91,15 @@ log:
     ##BlockDevice 给定路径上必须存在块设备
     type: DirectoryOrCreate
 
+# 容器内挂载 nfs 存储路径
+nfs:
+  enabled: false  # NFS 挂载开关
+  mountPath: /var/uploadFiles  # 容器内挂载路径
+  readOnly: false  # 容器内挂载权限
+  server: 172.21.16.7  # NFS 服务器IP
+  path: /data/nfs/shared  # NFS 共享目录
+  name: nfs-volume  # 卷名称（需与模板中一致）
+
 #配置文件
 configs:
   enabled: false

@@ -4,7 +4,7 @@ metadata:
   name: {{ include "deploy.name" . }}
   labels:
     {{- include "service.labels.standard" . | indent 4 }}
-  annotations: 
+  annotations:
     {{- include "service.annotations.standard" . | indent 4 }}
 spec:
   replicas: {{.Values.deploy.replicaCount }}
@@ -52,7 +52,7 @@ spec:
             - name: {{ lower .Values.service.protocol }}-{{ .Values.service.port }}
               containerPort: {{ .Values.service.targetPort }}
               protocol: {{ .Values.service.protocol }}
-          resources: 
+          resources:
             {{- toYaml .Values.deploy.resources | nindent 12 }}
           {{- if .Values.deploy.envVars }}
           env:
@@ -74,21 +74,37 @@ spec:
           {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled)}}
           volumeMounts:
             {{- if .Values.time.enabled }}
-          - name: host-time
-            readOnly: true
-            mountPath: /etc/localtime
-            {{- end }}         
-          {{- if or (.Values.log.persistence.enabled) ( .Values.log.hostPath.enabled)}}
-          - name: log
-            mountPath: {{.Values.log.mountPath}}
-          {{- end }}  
-          {{- if .Values.configs.enabled -}}
-          {{ include "configmap.mount" . | indent 10 }}
-          {{- end -}}
-        {{- end }}
-      {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled) }}        
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            {{- end }}
+            {{- if or (.Values.log.persistence.enabled) ( .Values.log.hostPath.enabled)}}
+            - name: log
+              mountPath: {{.Values.log.mountPath}}
+            {{- end }}
+            # ===== 新增 NFS 挂载配置 =====
+            {{- if .Values.nfs.enabled }}
+            - name: {{ .Values.nfs.name }}
+              mountPath: {{ .Values.nfs.mountPath }}
+              readOnly: {{ .Values.nfs.readOnly }}
+            {{- end }}
+            # ===== NFS 挂载配置结束 =====
+            {{- if .Values.configs.enabled -}}
+            {{ include "configmap.mount" . | indent 10 }}
+            {{- end -}}
+          {{- end }}
+      {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled) (.Values.nfs.enabled) }}
       volumes:
-        {{- include "time.volumes" . | indent 8 -}} 
+        {{- include "time.volumes" . | indent 8 -}}
         {{- include "log.volumes" . | indent 8 -}}
         {{ include "configmap.volumes" . | indent 8 }}
-      {{- end }} 
+        # ===== 新增 NFS 卷定义 =====
+        {{- if .Values.nfs.enabled }}
+        - name: {{ .Values.nfs.name }}
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.path }}
+            readOnly: {{ .Values.nfs.readOnly }}
+        {{- end }}
+        # ===== NFS 卷定义结束 =====
+      {{- end }}
