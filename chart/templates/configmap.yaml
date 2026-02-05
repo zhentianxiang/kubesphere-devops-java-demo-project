@@ -2,19 +2,15 @@
 {{- $configname := include "deploy.name" . }}
 {{- $label := include "service.labels.standard" . }}
 {{- range $file := .Values.configs.list }}
-{{- range $key, $values := $file }}
-{{- if eq $key "name" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ print $configname "-" $values|replace "." "-" }}
+  name: {{ print $configname "-" $file.name | replace "." "-" }}
   labels:
 {{- $label | indent 4 }}
 data:
-  {{ $values }}: |
-{{ $.Files.Get (printf "%s%s" "configs/" .) | indent 4 }}
+  {{ $file.name }}: |
+{{ $.Files.Get (printf "configs/%s" $file.name) | indent 4 }}
 ---
-{{- end }}
-{{- end }}
 {{- end }}
 {{- end }}

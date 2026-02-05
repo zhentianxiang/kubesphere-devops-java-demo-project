@@ -66,13 +66,13 @@ ingress:
 #    label: "true"
 
 log:
-  enabled: false
+  enabled: true
   #容器内挂载路径
   mountPath: /tmp/mount
   #以下方式只能选择一个，同时为true该配置不生效
   #使用pvc
   persistence:
-    enabled: false
+    enabled: true
     accessMode: "ReadWriteOnce"
     size: 10Gi
     storageClass: "-"
@@ -93,7 +93,7 @@ log:
 
 # 容器内挂载 nfs 存储路径
 nfs:
-  enabled: false  # NFS 挂载开关
+  enabled: true  # NFS 挂载开关
   mountPath: /var/uploadFiles  # 容器内挂载路径
   readOnly: false  # 容器内挂载权限
   server: 172.21.16.7  # NFS 服务器IP
@@ -102,7 +102,7 @@ nfs:
 
 #配置文件
 configs:
-  enabled: false
+  enabled: true
   #name是congfigs里文件的名称
   #path是容器内挂载路径
   #subPath:文件名称，和name保持一致，按示例配置即可
@@ -120,5 +120,5 @@ time:
 
 #是否使用主机网络
 hostNetwork:
-  enabled: false
+  enabled: true
 

@@ -60,13 +60,9 @@ helm.sh/chart: {{ .Chart.Name | quote }}
 {{- if .Values.configs.enabled -}}
 {{- $configname := include "deploy.name" . }}
 {{- range $file := .Values.configs.list }}
-{{- range $key, $values := $file }}
-{{- if eq $key "name" }}
-- name: {{ print $configname "-" $values|replace "." "-" }}
-  configMap: 
-   name: {{ print $configname "-" $values|replace "." "-" }}
-{{- end }}
-{{- end }}
+- name: {{ print $configname "-" $file.name | replace "." "-" }}
+  configMap:
+    name: {{ print $configname "-" $file.name | replace "." "-" }}
 {{- end }}
 {{- end -}}
 {{- end -}}
@@ -76,16 +72,10 @@ helm.sh/chart: {{ .Chart.Name | quote }}
 {{- if .Values.configs.enabled -}}
 {{- $configname := include "deploy.name" . }}
 {{- range $file := .Values.configs.list }}
-{{- range $key, $values := $file }}
-{{- if eq $key "name" }}
-- name: {{ print $configname "-" $values|replace "." "-" }}
-{{- end }}
-{{- if eq $key "path" }}
-  mountPath: {{ $values }}
-{{- end }}
-{{- if eq $key "subPath" }}
-  subPath: {{ $values }}
-{{- end }}
+- name: {{ print $configname "-" $file.name | replace "." "-" }}
+  mountPath: {{ $file.path }}
+{{- if $file.subPath }}
+  subPath: {{ $file.subPath }}
 {{- end }}
 {{- end }}
 {{- end -}}

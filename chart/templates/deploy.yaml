@@ -89,9 +89,9 @@ spec:
               readOnly: {{ .Values.nfs.readOnly }}
             {{- end }}
             # ===== NFS 挂载配置结束 =====
-            {{- if .Values.configs.enabled -}}
-            {{ include "configmap.mount" . | indent 10 }}
-            {{- end -}}
+            {{- if .Values.configs.enabled }}
+            {{- include "configmap.mount" . | indent 12 }}
+            {{- end }}
           {{- end }}
       {{- if or (.Values.log.enabled) (.Values.time.enabled) (.Values.configs.enabled) (.Values.nfs.enabled) }}
       volumes:
