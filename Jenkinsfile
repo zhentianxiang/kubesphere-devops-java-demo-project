@@ -201,35 +201,56 @@ pipeline {
       steps {
         container('maven') {
           script {
+            // 1. 根据 GIT_REF 推断部署环境和 Spring Profile
+            def branch = params.GIT_REF?.trim()
+            String deployEnv
+            if (branch ==~ /^dev(-.*)?$/) {
+              deployEnv = 'dev'
+            } else if (branch ==~ /^pre(-.*)?$/) {
+              deployEnv = 'pre'
+            } else if (branch ==~ /^(pro|prod|main)(-.*)?$/) {
+              deployEnv = 'prod'
+            } else {
+              error "无法根据 GIT_REF='${branch}' 推断部署环境，请使用 dev/dev-、pre/pre-、main/main-、pro/prod/pro-/prod- 作为前缀"
+            }
+    
+            def springProfilesActive = (deployEnv == 'prod') ? 'prod' : 'dev'
+            echo "🏗️ 使用 Spring Profile: ${springProfilesActive}"
+    
+            // 2. 获取 JAR 文件相对路径
             def jarRelativePath = sh(
               returnStdout: true,
               script: "realpath --relative-to=. ${env.JAR_PATH}"
             ).trim()
             env.JAR_RELATIVE_PATH = jarRelativePath
             echo "📦 Docker JAR_FILE 参数: ${jarRelativePath}"
-          }
-
-          withCredentials([usernamePassword(
-            credentialsId: 'harbor-login',
-            usernameVariable: 'HARBOR_USER',
-            passwordVariable: 'HARBOR_PASSWD'
-          )]) {
-            sh '''
-              echo "登录 Harbor 仓库"
-              echo "$HARBOR_PASSWD" | docker login $HARBOR_ADDRESS -u "$HARBOR_USER" --password-stdin
-            '''
-
-            sh """
-              echo "构建镜像: $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}"
-              docker build -t $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME} --build-arg JAR_FILE=${JAR_RELATIVE_PATH} .
-            """
-
-            sh """
-              echo "推送镜像中..."
-              docker push $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}
-              docker rmi $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}
-              echo "✅ 镜像推送成功: $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}"
-            """
+    
+            // 3. 登录 Harbor 并构建推送镜像
+            withCredentials([usernamePassword(
+              credentialsId: 'harbor-login',
+              usernameVariable: 'HARBOR_USER',
+              passwordVariable: 'HARBOR_PASSWD'
+            )]) {
+              sh '''
+                echo "登录 Harbor 仓库"
+                echo "$HARBOR_PASSWD" | docker login $HARBOR_ADDRESS -u "$HARBOR_USER" --password-stdin
+              '''
+    
+              // 关键修改：传递 SPRING_PROFILES_ACTIVE 构建参数
+              sh """
+                echo "构建镜像: $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}"
+                docker build -t $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME} \
+                  --build-arg SPRING_PROFILES_ACTIVE=${springProfilesActive} \
+                  --build-arg JAR_FILE=${JAR_RELATIVE_PATH} .
+              """
+    
+              sh """
+                echo "推送镜像中..."
+                docker push $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}
+                docker rmi $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}
+                echo "✅ 镜像推送成功: $HARBOR_ADDRESS/$IMAGE_PROJECT/$IMAGE_NAME:${TAG_NAME}"
+              """
+            }
           }
         }
       }
